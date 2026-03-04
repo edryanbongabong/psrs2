@@ -1,0 +1,65 @@
+{% extends 'includes/base.html' %}
+
+{% block content %}
+<div class="content pt-2">
+  {% for message in messages %}
+    {% if message.tags == 'error' %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="danger">
+    {% else %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="{{ message.tags }}">
+    {% endif %}
+  {% endfor %}
+  <div class="card bg-{{ options.theme_color }}">
+    <div class="card-body p-2">
+      <form action="" method="post" id="frm_data" autocomplete="off">
+        {% csrf_token %}
+        <div class="d-flex justify-content-between">
+          <h4 class="mb-0 font-weight-bold ml-2">{{ title }}</h4>
+          <div class="row div-options" style="width: 500px;">
+            <div class="col-4 justify-content-end d-flex align-middle">Select Category</div>
+            <div class="col-8">
+               {{ form.category }}
+            </div>
+          </div>
+          <div>
+            <button type="submit" class="btn btn-default" form="frm_data">Preview Report</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div> 
+  <div class="card card-{{ options.theme_color }} card-outline card-outline-tabs mb-0">
+    <div class="card-header p-0 border-bottom-0">
+      <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link font-weight-bold active" id="age-tab" data-toggle="pill" href="#age" role="tab" aria-controls="age" aria-selected="true">Age Recap</a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body p-0">
+      <div class="tab-content" id="custom-tabs-three-tabContent">
+        <div class="tab-pane fade show active" id="age" role="tabpanel" aria-labelledby="age-tab" style="height: calc(100vh - 15.6em);">
+          <iframe src="{% url 'generate-age-recap' %}" frameborder="0" allowfullscreen width="100%" height="100%" id="frame-age"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function resetSrc(src) {
+  var src = src.split('?')[0];
+  return src;  
+}
+$(document).ready(function () {
+  $('#frm_data').on('submit', function (e) {
+    e.preventDefault();
+    var category = $('#id_category').val();
+    var frameSrc = resetSrc($('#frame-age').attr('src')) + '?category=' + category;
+    $('#frame-age').attr('src', frameSrc);
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'includes/base.html' %}
+
+{% block content %}
+<div class="content-header">
+  <div class="row mb-2">
+    <div class="col-sm-9">
+      <h1 class="m-0 text-light">{{ title }}</h1>
+    </div>
+    <div class="col-sm-3">
+      <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item text-light active">{{ title }}</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="content">
+  {% for message in messages %}
+    {% if message.tags == 'error' %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="danger">
+    {% else %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="{{ message.tags }}">
+    {% endif %}
+  {% endfor %}
+  <div class="card card-{{ options.theme_color }} card-outline card-outline-tabs mb-0">
+    <form id="frm-upload" method="post" enctype="multipart/form-data">
+      <div class="card-header"><h3 class="card-title">Upload Personnel Data</h3></div>
+      <div class="card-body">
+          {% csrf_token %}
+          <div class="form-group{% if form.office.errors %} invalid{% endif %}">
+            <label for="{{ form.office.id_for_label }}" class="col-3 font-size-1{% if form.office.field.required %} required{% endif %}">{{ form.office.label }}</label>
+            {{ form.office }}
+            {% for error in form.office.errors %}
+            <p class="help-block">{{ error }}</p>
+            {% endfor %}
+          </div>
+          <div class="form-group{% if form.file.errors %} invalid{% endif %}">
+            <label for="{{ form.file.id_for_label }}" class="col-3 font-size-1{% if form.file.field.required %} required{% endif %}">{{ form.file.label }}</label>
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" id="id_file" name="file" accept="" required>
+              <label class="custom-file-label" for="id_file">Choose file</label>
+            </div>
+            {% for error in form.file.errors %}
+            <p class="help-block">{{ error }}</p>
+            {% endfor %}
+          </div>          
+      </div>
+      <div class="card-footer d-flex justify-content-end">
+        <a href="{% url 'download-template2' %}" type="button" class="btn btn-md btn-outline-info"><i class="far fa-file-excel"></i> Download Template</a>&nbsp;
+        <button type="submit" class="btn btn-md btn-primary" form="frm-upload"><i class="fas fa-upload"></i> Upload Excel File</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content"></div>
+  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal-sm">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript">
+  $(function () {
+    'use strict'    
+
+    $(document).on('submit', '#frm-upload', function (e) {
+      e.preventDefault();
+      var form = this;
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You are about to upload and excel file. Do you want to proceed?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, upload it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.value) {
+          form.submit();
+        }
+      });
+    });
+  });
+</script>
+{% endblock extra_js %}

@@ -1,0 +1,68 @@
+{% load static %}
+{% load active_link_tags %}
+{% load custom_filters %}
+<aside class="main-sidebar sidebar-{{ options.theme }}-primary elevation-4">
+  <a href="{% url 'home' %}" class="brand-link text-sm">
+    <img src="{{ options.app_logo.url }}" alt="System Logo" class="brand-image img-circle elevation-3">
+    <span class="brand-text font-weight-bold">{{ options.app_brand }}</span>
+  </a>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- Sidebar user (optional) -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+      <div class="image">
+        <a href="#modal-profile" data-toggle="modal" class="d-block">
+          <img src="{{ user.users_profile.picture.url }}" class="img-circle elevation-2" alt="User Image">
+        </a>
+      </div>
+      <div class="info">
+        <a href="#modal-profile" data-toggle="modal" class="d-block">{{ user.users_profile }}</a>
+      </div>
+    </div>
+
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column nav-flat" data-widget="treeview" role="menu" data-accordion="false">
+        <li class="nav-item">
+          <a href="{% url 'home' %}" class="nav-link {% active_link 'home' %}">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>Dashboard</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'personnel' %}" class="nav-link {% active_link 'personnel' %}">
+            <i class="nav-icon fas fa-users"></i>
+            <p>Personnel</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'reports' %}" class="nav-link {% active_link 'reports || view-report' %}">
+            <i class="nav-icon fas fa-file"></i>
+            <p>Daily Reports</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'age-recap' %}" class="nav-link {% active_link 'age-recap' %}">
+            <i class="nav-icon fas fa-chart-bar"></i>
+            <p>Age Recap</p>
+          </a>
+        </li>
+        {% if request.user|has_group:"Approver" %}
+        <li class="nav-item">
+          <a href="{% url 'action-list' %}" class="nav-link {% active_link 'action-list || view-action-list' %}">
+            <i class="nav-icon fas fa-tasks"></i>
+            <p>Action List {% if count_action_list %}<span class="right badge badge-pill badge-danger">{{ count_action_list }}</span>{% endif %}</p>
+          </a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+          <a href="{% url 'orders' %}" class="nav-link {% active_link 'orders' %}">
+            <i class="nav-icon fas fa-file-signature"></i>
+            <p>Orders</p>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</aside>

@@ -1,0 +1,102 @@
+{% extends 'includes/base.html' %}
+
+{% block content %}
+<div class="content-header">
+  <div class="row">
+    <div class="col-sm-6">
+      <h1 class="m-0 text-light">{{ title }} <small>Administration</small></h1>
+    </div>
+    <div class="col-sm-6">
+      <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active text-light">{{ title }}</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="content">
+  {% for message in messages %}
+    {% if message.tags == 'error' %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="danger">
+    {% else %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="{{ message.tags }}">
+    {% endif %}
+  {% endfor %}
+  <div class="card card-{{ options.theme_color }} card-outline">
+    <div class="card-body table-responsive">      
+      <table id="tbl_data" class="table table-bordered table-hover table-sm">
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal">
+  <div class="modal-dialog modal-{{ modal_size }}" role="document">
+    <div class="modal-content"></div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+  $(document).ready(function () {
+    $('#tbl_data').on('initComplete', function (event, table) {
+      $('.dataTables_filter').empty()
+      $('.dataTables_length').append('<button id="create-data" class="btn btn-primary float-right" type="button" name="button">Add New</button>')
+
+      $("#create-data").modalForm({
+        formURL: "create/"
+      });
+    });
+    
+    $('#tbl_data').on('draw.dt', function (table, settings) {
+      $(".update-data").each(function () {
+        $(this).modalForm({ formURL: $(this).data("form-url") });
+      });
+
+      $(".delete-data").each(function () {
+        $(this).modalForm({ formURL: $(this).data("form-url"), isDeleteForm: true });
+      });
+
+      $(".change-password-data").each(function () {
+        $(this).modalForm({ formURL: $(this).data("form-url") });
+      });
+    });
+
+    AjaxDatatableViewUtils.initialize_table(
+      $('#tbl_data'),
+      "all/",
+      {
+        processing: false,
+        autoWidth: false,
+        full_row_select: false,
+        scrollX: false
+      }, {},
+    );
+
+    $.each($('[name="message[]"]'), function(){
+      Toast.fire({
+        icon: $(this).data('tags'),
+        title: $(this).val(),
+      });
+    })
+
+    $(document).on('submit', '#form-data', function (e) {
+      e.preventDefault();
+      var form = this;
+      Confirm.fire({
+        title: 'Are you sure?',
+        text: 'Would you like to proceed?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, save it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.value) {
+          form.submit();
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

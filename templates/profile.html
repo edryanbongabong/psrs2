@@ -1,0 +1,121 @@
+{% extends 'includes/base.html' %}
+
+{% block content %}
+<div class="content-header">
+  <div class="row mb-2">
+    <div class="col-sm-6">
+      <h1 class="m-0 text-light">{{ title|title }}</h1>
+    </div>
+    <div class="col-sm-6">
+      <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active text-light">{{ title|title }}</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="content">
+  {% for message in messages %}
+    {% if message.tags == 'error' %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="danger">
+    {% else %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="{{ message.tags }}">
+    {% endif %}
+  {% endfor %}
+  <form method="post" id="form-data">
+    {% csrf_token %}
+    <div class="card card-primary card-outline">
+      <div class="card-body box-profile">
+        <div class="text-center">
+          <img class="profile-user-img img-fluid img-circle" src="{{ user.users_profile.picture.url }}"
+            alt="User profile picture">
+        </div>
+        <h3 class="profile-username text-center">{{ user.users_profile }}</h3>
+        <p class="text-muted text-center">
+          {% for group in user.groups.all %}
+            <span class="badge badge-secondary badge-pill">{{ group.name }}</span>&nbsp;
+          {% endfor %}
+        </p>
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="id_username" class="required">Username</label>
+              <input type="text" name="username" value="{{ user.username }}" class="form-control form-control-sm" readonly maxlength="150" id="id_username">
+            </div>
+            <div class="form-group">
+              <label for="id_email" class="required">Email</label>
+              <input type="text" name="email" value="{{ user.email }}" class="form-control form-control-sm" readonly maxlength="150" id="id_email">
+            </div>
+            {% for field in form %}
+              {% if field.name == 'is_active' %}
+              <div class="form-group{% if field.errors %} invalid{% endif %}">
+                <label for="{{ field.id_for_label }}" class="{% if field.field.required %}required{% endif %}">{{ field.label }}</label>
+                <div class="custom-control custom-switch">                      
+                  {{ field.as_widget }}
+                  <label class="custom-control-label" for="{{ field.id_for_label }}">&nbsp;</label>
+                </div>
+                {% for error in field.errors %}
+                <p class="help-block">{{ error }}</p>
+                {% endfor %}
+              </div>
+              {% else %}
+              <div class="form-group{% if field.errors %} invalid{% endif %}">
+                <label for="{{ field.id_for_label }}" class="{% if field.field.required %} required{% endif %}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}
+                <p class="help-block">{{ error }}</p>
+                {% endfor %}
+              </div>
+              {% endif %}
+            {% endfor %}
+            <a href="{% url 'change-password-user' user.id %}" class="btn btn-outline-info btn-block"><b>Reset Password</b></a>
+          </div>
+          <div class="col">
+            {% for field in profileForm %}
+            <div class="form-group{% if field.errors %} invalid{% endif %}">
+              <label for="{{ field.id_for_label }}" class="{% if field.field.required %} required{% endif %}">{{ field.label }}</label>
+              {{ field }}
+              {% for error in field.errors %}
+              <p class="help-block">{{ error }}</p>
+              {% endfor %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg float-right"><b>Update Profile</b></button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  $(document).ready(function () {
+    $.each($('[name="message[]"]'), function(){
+      Toast.fire({
+        icon: $(this).data('tags'),
+        title: $(this).val(),
+      });
+    })
+
+    $(document).on('submit', '#form-data', function (e) {
+      e.preventDefault();
+      var form = this;
+      Confirm.fire({
+        title: 'Are you sure?',
+        text: 'Would you like to proceed?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, save it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.value) {
+          form.submit();
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

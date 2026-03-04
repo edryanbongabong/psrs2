@@ -1,0 +1,185 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-header">
+  <div class="row">
+    <div class="col-sm-6">
+      <h1 class="m-0 text-light">{{ title|title }}</h1>
+    </div>
+    <div class="col-sm-6">
+      <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active text-light">{{ title|title }}</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="content">
+  {% for message in messages %}
+    {% if message.tags == 'error' %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="danger">
+    {% else %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="{{ message.tags }}">
+    {% endif %}
+  {% endfor %}
+  <form action="" method="post" enctype="multipart/form-data" autocomplete="off" id="form-data">
+    {% csrf_token %}    
+    {{ form.non_field_errors }}
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="card card-{{ options.theme_color }}">
+          <div class="card-header">
+            <h3 class="card-title">General</h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-group{% if form.app_name.errors %} invalid{% endif %}">
+              <label for="{{ form.app_name.id_for_label }}"
+                class="{% if form.app_name.field.required %}required{% endif %}">{{ form.app_name.label }}</label>
+              {{ form.app_name.as_widget }}
+              {% for error in form.app_name.errors %}
+              <p class="help-block">{{ error }}</p>
+              {% endfor %}
+            </div>
+            <div class="form-group{% if form.app_brand.errors %} invalid{% endif %}">
+              <label for="{{ form.app_brand.id_for_label }}"
+                class="{% if form.app_brand.field.required %}required{% endif %}">{{ form.app_brand.label }}</label>
+              {{ form.app_brand.as_widget }}
+              {% for error in form.app_brand.errors %}
+              <p class="help-block">{{ error }}</p>
+              {% endfor %}
+            </div>
+            <div class="form-group{% if form.app_description.errors %} invalid{% endif %}">
+              <label for="{{ form.app_description.id_for_label }}"
+                class="{% if form.app_description.field.required %}required{% endif %}">{{ form.app_description.label }}</label>
+              {{ form.app_description.as_widget }}
+              {% for error in form.app_description.errors %}
+              <p class="help-block">{{ error }}</p>
+              {% endfor %}
+            </div>
+            <div class="form-group{% if form.app_logo.errors %} invalid{% endif %}">
+              <label for="{{ form.app_logo.id_for_label }}"
+                class="{% if form.app_logo.field.required %}required{% endif %}">{{ form.app_logo.label }}</label>                
+              <div class="text-center mb-2">
+                <img src="{{ options.app_logo.url }}" alt="System Logo" class="img-circle" height="100">
+              </div>
+              <div class="custom-file">
+                {{ form.app_logo.as_widget }}
+                <label class="custom-file-label" for="{{ form.app_logo.id_for_label }}">Choose file</label>
+              </div>
+              {% for error in form.app_logo.errors %}
+              <p class="help-block">{{ error }}</p>
+              {% endfor %}
+            </div>
+            <div class="form-group">
+              <label for="{{ form.theme.id_for_label }}" class="{% if form.theme.field.required %}required{% endif %}">{{ form.theme.label }}</label> 
+              <div class="input-group">
+                {{ form.theme.as_widget }}
+                {% for error in form.theme.errors %}
+                <p class="help-block">{{ error }}</p>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="{{ form.theme_color.id_for_label }}" class="{% if form.theme_color.field.required %}required{% endif %}">{{ form.theme_color.label }}</label>
+              <input type="text" name="theme_color" id="id_theme_color" value="{{ options.theme_color }}" class="form-control form-control-sm bg-{{ options.theme_color }}" placeholder=". . ." required readonly>
+              <div class="btn-group">
+                <ul class="fc-color-picker" id="color-chooser">
+                {% for color in colors %}
+                  <li><a class="text-{{ color }}" href="#" data-color="{{ color }}"><i class="fas fa-square"></i></a></li>
+                {% endfor %}
+                </ul>
+              </div>
+            </div>
+            {% comment %}
+            <div class="form-group">
+              <label for="id_theme_color">Theme Color</label>
+              <input type="text" name="theme_color" id="id_theme_color" value="{{ settings.theme_color }}" class="form-control form-control-sm bg-{{ settings.theme_color }}" placeholder=". . ." required readonly>
+              <div class="btn-group">
+                <ul class="fc-color-picker" id="color-chooser">
+                {% for color in colors %}
+                  <li><a class="text-{{ color }}" href="#" data-color="{{ color }}"><i class="fas fa-square"></i></a></li>
+                {% endfor %}
+                </ul>
+              </div>
+            </div>
+            
+            {% endcomment %}
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card card-{{ options.theme_color }}">
+          <div class="card-header">
+            <h3 class="card-title">General</h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-group{% if form.upload_max_size.errors %} invalid{% endif %}">
+              <label for="{{ form.upload_max_size.id_for_label }}"
+                class="{% if form.upload_max_size.field.required %}required{% endif %}">{{ form.upload_max_size.label }}</label>
+              {{ form.upload_max_size.as_widget }}
+              {% for error in form.upload_max_size.errors %}
+              <p class="help-block">{{ error }}</p>
+              {% endfor %}
+            </div>
+            {% comment %}
+            <div class="form-group">
+              <label for="id_upload_max_size" class="required">Upload Max Size <i class="fa fa-question-circle" data-toggle="tooltip" title="The maximum size of a file that can be uploaded in kilobytes."></i></label>
+              <input type="number" name="upload_max_size" id="id_upload_max_size" value="{{ settings.upload_max_size }}" class="form-control form-control-sm" placeholder=". . ." maxlength="11" required>
+            </div>
+            {% endcomment %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary float-right">Save changes</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  $(document).ready(function () {
+    $('#color-chooser > li > a').click(function (e) {
+      e.preventDefault()
+      var theme_color = $(this).data('color')
+      $('#id_theme_color').val(theme_color).attr('class', $('#id_theme_color').get(0).className.replace(/\bbg-\S+/g, 'bg-'+theme_color));
+    })
+
+    $.each($('[name="message[]"]'), function(){
+      Toast.fire({
+        icon: $(this).data('tags'),
+        title: $(this).val(),
+      });
+    })
+
+    $(document).on('submit', '#form-data', function (e) {
+      e.preventDefault();
+      var form = this;
+      Confirm.fire({
+        title: 'Are you sure?',
+        text: 'Would you like to proceed?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, save it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.value) {
+          form.submit();
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

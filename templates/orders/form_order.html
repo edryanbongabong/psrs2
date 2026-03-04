@@ -1,0 +1,122 @@
+{% extends 'includes/base.html' %}
+
+{% block content %}
+<div class="content-header">
+  <div class="row mb-2">
+    <div class="col-sm-6">
+      <h1 class="m-0 text-light">{{ title }}</h1>
+    </div>
+    <div class="col-sm-6">
+      <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active text-light">{{ title }}</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="content">
+  {% for message in messages %}
+    {% if message.tags == 'error' %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="danger">
+    {% else %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="{{ message.tags }}">
+    {% endif %}
+  {% endfor %}
+  <form method="post" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="card card-{{ options.theme_color }} card-outline">
+      <div class="card-body">
+        <div class="{% if form.non_field_errors %}invalid{% endif %} mb-2">
+          {% for error in form.non_field_errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+        <div class="row">
+          <div class="col-4">
+            {% for field in form %}
+              {% if field.name == 'is_published' %}
+                <div class="form-group{% if field.errors %} invalid{% endif %}">
+                  <label for="{{ field.id_for_label }}" class="{% if field.field.required %}required{% endif %}">{{ field.label }}</label>
+                  <div class="custom-control custom-switch">                      
+                    {{ field.as_widget }}
+                    <label class="custom-control-label" for="{{ field.id_for_label }}">&nbsp;</label>
+                  </div>
+                  {% for error in field.errors %}
+                  <p class="help-block">{{ error }}</p>
+                  {% endfor %}
+                </div>
+                {% else %}
+                <div class="form-group{% if field.errors %} invalid{% endif %}">
+                  <label for="{{ field.id_for_label }}" class="{% if field.field.required %} required{% endif %}">{{ field.label }}</label>
+                  {{ field }}
+                  {% for error in field.errors %}
+                  <p class="help-block">{{ error }}</p>
+                  {% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+          </div>
+          <div class="col-8">
+            {% with named_formsets.orderpersonnel as formset %}
+              {{ formset.management_form }}
+              <script type="text/html" id="orderpersonnel-template">
+                <tr id="orderpersonnel-__prefix__" class= hide_all>
+                    {% for fields in formset.empty_form.hidden_fields %}
+                        {{ fields }}
+                    {% endfor %}
+                
+                    {% for fields in formset.empty_form.visible_fields %}
+                        <td>{{fields}}</td>
+                    {% endfor %}
+                </tr>
+              </script>
+              <div class="table-responsive card mt-4">
+                <div class="card-header card-header-secondary">
+                  <h4 class="card-title font-weight-bold">Add Personnel</h4>
+                </div>
+                <table class="table card-body">
+                  <thead class="text-secondary">
+                    <th class="required">Personnel</th>
+                    <th class="required">New Unit</th>
+                    <th>Delete?</th>
+                  </thead>
+                  <tbody id="item-orderpersonnel"> <!-- id="item-inlineformsetname" -->
+                    <!-- formset non forms errors -->
+                    {% for error in formset.non_form_errors %}
+                    <span style="color: red">{{ error }}</span>
+                    {% endfor %}
+    
+                    {% for formss in formset %}
+                    {{ formss.management_form }}
+                    <tr id="orderpersonnel-{{ forloop.counter0 }}" class=hide_all>
+                      <!-- id="inlineformsetname-counter" -->
+                      {{ formss.id }}
+                      {% for field in formss.visible_fields %}
+                      <td>
+                        {{field}}
+                        {% for error in field.errors %}
+                        <span style="color: red">{{ error }}</span>
+                        {% endfor %}
+                      </td>
+                      {% endfor %}
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+                <a href="#" id="add-orderpers-button" class="btn btn-secondary add-orderpersonnel">Add More</a>
+                <!-- id="add-inlineformsetname-button" -->
+              </div>
+            {% endwith %}
+          </div>
+        </div>
+      </div>
+      <div class="card-footer text-right">
+        <button type="submit" class="btn btn-primary">Create</button>
+      </div>
+    </div>
+  </form>
+</div>
+<script>
+  
+</script>
+{% endblock %}

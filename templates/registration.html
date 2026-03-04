@@ -1,0 +1,395 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{{ options.app_brand }} | Registration</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Favicon -->
+  <link rel="icon" href="{{ options.app_logo.url }}" type="image/png" sizes="16x16">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{% static 'admin-lte/plugins/fontawesome-free/css/all.min.css' %}">
+  <!-- icheck bootstrap -->
+  <link rel="stylesheet" href="{% static 'admin-lte/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="{% static 'admin-lte/plugins/select2/css/select2.min.css' %}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'admin-lte/dist/css/adminlte.min.css' %}">
+  <!-- Google Font: Assistant -->
+  <link rel="stylesheet" href="{% static 'fonts/assistant.css' %}">
+  <!-- Custom CSS -->
+  <link href="{% static 'css/login.css' %}" rel="stylesheet">
+  <style>
+    .required::after {
+      content: ' *';
+      color: red;
+    }
+  </style>
+</head>
+
+<body class="hold-transition register-page">
+  <div id="spinner-div" class="spin-wrapper invisible">
+    <div class="spinner">
+    </div>
+  </div>
+  <div class="container mt-2">
+    <div class="register-logo">
+      <a href="{% url 'login' %}">
+        <img src="{{ options.app_logo.url }}" height="80"><br>
+        <strong>{{ options.app_brand }}</span>
+      </a>
+    </div>
+    
+    <div class="card">
+      <div class="card-body register-card-body">
+        <p class="login-box-msg">Register account for new applicant</p>
+
+        <form action="" method="post" autocomplete="off">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+          {{ profileForm.non_field_errors }}
+          <div class="row mb-2">
+            <div class="col-lg-8 col-md-6">
+              <div class="p-2 rounded bg-light">
+                <h5 class="mb-4 py-2 text-center bg-{{ options.theme_color }} rounded">Personal Information</h5>
+                <div class="row">
+                  <div class="form-group col-lg-6{% if form.first_name.errors %} invalid{% endif %}">
+                    <label for="{{ form.first_name.id_for_label }}"
+                      class="{% if form.first_name.field.required %}required{% endif %}">{{ form.first_name.label }}</label>
+                    {{ form.first_name.as_widget }}
+                    {% for error in form.first_name.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-6{% if form.last_name.errors %} invalid{% endif %}">
+                    <label for="{{ form.last_name.id_for_label }}"
+                      class="{% if form.last_name.field.required %}required{% endif %}">{{ form.last_name.label }}</label>
+                    {{ form.last_name }}
+                    {% for error in form.last_name.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-6{% if profileForm.middle_name.errors %} invalid{% endif %}">
+                    <label for="{{ profileForm.middle_name.id_for_label }}"
+                      class="{% if profileForm.middle_name.field.required %}required{% endif %}">{{ profileForm.middle_name.label }}</label>
+                    {{ profileForm.middle_name }}
+                    {% for error in profileForm.middle_name.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-6{% if profileForm.ext_name.errors %} invalid{% endif %}">
+                    <label for="{{ profileForm.ext_name.id_for_label }}"
+                      class="{% if profileForm.ext_name.field.required %}required{% endif %}">{{ profileForm.ext_name.label }}</label>
+                    {{ profileForm.ext_name }}
+                    {% for error in profileForm.ext_name.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-6{% if profileForm.rank.errors %} invalid{% endif %}">
+                    <label for="{{ profileForm.rank.id_for_label }}"
+                      class="{% if profileForm.rank.field.required %}required{% endif %}">{{ profileForm.rank.label }}</label>
+                    {{ profileForm.rank }}
+                    {% for error in profileForm.rank.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-6{% if profileForm.bos.errors %} invalid{% endif %}">
+                    <label for="{{ profileForm.bos.id_for_label }}"
+                      class="{% if profileForm.bos.field.required %}required{% endif %}">{{ profileForm.bos.label }}</label>
+                    {{ profileForm.bos }}
+                    {% for error in profileForm.bos.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-6{% if profileForm.complete_address.errors %} invalid{% endif %}">
+                    <label for="{{ profileForm.complete_address.id_for_label }}"
+                      class="{% if profileForm.complete_address.field.required %}required{% endif %}">{{ profileForm.complete_address.label }}</label>
+                    {{ profileForm.complete_address }}
+                    {% for error in profileForm.complete_address.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-6{% if profileForm.cp_number.errors %} invalid{% endif %}">
+                    <label for="{{ profileForm.cp_number.id_for_label }}"
+                      class="{% if profileForm.cp_number.field.required %}required{% endif %}">{{ profileForm.cp_number.label }}</label>
+                    {{ profileForm.cp_number }}
+                    {% for error in profileForm.cp_number.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  {% comment %}
+                  <div class="form-group col-lg-6{% if profileForm.afpcaa_member.errors %} invalid{% endif %}">
+                    <label for="{{ profileForm.afpcaa_member.id_for_label }}"
+                      class="{% if profileForm.afpcaa_member.field.required %}required{% endif %}">{{ profileForm.afpcaa_member.label }}</label>
+                    {{ profileForm.afpcaa_member }}
+                    {% for error in profileForm.afpcaa_member.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-6{% if profileForm.relationship.errors %} invalid{% endif %}">
+                    <label for="{{ profileForm.relationship.id_for_label }}"
+                      class="{% if profileForm.relationship.field.required %}required{% endif %}">{{ profileForm.relationship.label }}</label>
+                    {{ profileForm.relationship }}
+                    {% for error in profileForm.relationship.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-6{% if profileForm.guardian.errors %} invalid{% endif %}">
+                    <label for="{{ profileForm.guardian.id_for_label }}"
+                      class="{% if profileForm.guardian.field.required %}required{% endif %}">{{ profileForm.guardian.label }}</label>
+                    {{ profileForm.guardian }}
+                    {% for error in profileForm.guardian.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  {% endcomment %}
+                  <div class="form-group col-lg-6{% if profileForm.dob.errors %} invalid{% endif %}">
+                    <label for="{{ profileForm.dob.id_for_label }}"
+                      class="{% if profileForm.dob.field.required %}required{% endif %}">{{ profileForm.dob.label }}</label>
+                    {{ profileForm.dob }}
+                    {% for error in profileForm.dob.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-6{% if profileForm.pob.errors %} invalid{% endif %}">
+                    <label for="{{ profileForm.pob.id_for_label }}"
+                      class="{% if profileForm.pob.field.required %}required{% endif %}">{{ profileForm.pob.label }}</label>
+                    {{ profileForm.pob }}
+                    {% for error in profileForm.pob.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  {% comment %}
+                  <div class="form-group col-lg-6{% if profileForm.religion.errors %} invalid{% endif %}">
+                    <label for="{{ profileForm.religion.id_for_label }}"
+                      class="{% if profileForm.religion.field.required %}required{% endif %}">{{ profileForm.religion.label }}</label>
+                    {{ profileForm.religion }}
+                    {% for error in profileForm.religion.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-6{% if profileForm.civil_status.errors %} invalid{% endif %}">
+                    <label for="{{ profileForm.civil_status.id_for_label }}"
+                      class="{% if profileForm.civil_status.field.required %}required{% endif %}">{{ profileForm.civil_status.label }}</label>
+                    {{ profileForm.civil_status }}
+                    {% for error in profileForm.civil_status.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  {% endcomment %}
+                  <div class="form-group col-lg-6{% if profileForm.sex.errors %} invalid{% endif %}">
+                    <label for="{{ profileForm.sex.id_for_label }}"
+                      class="{% if profileForm.sex.field.required %}required{% endif %}">{{ profileForm.sex.label }}</label>
+                    {{ profileForm.sex }}
+                    {% for error in profileForm.sex.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mt-md-0 mt-2">
+              <div class="p-2 rounded bg-light">                
+                <h5 class="mb-4 py-2 text-center bg-{{ options.theme_color }} rounded">Login Information</h5>
+                <div class="form-group{% if form.username.errors %} invalid{% endif %}">
+                  <label for="{{ form.username.id_for_label }}"
+                    class="{% if form.username.field.required %}required{% endif %}">{{ form.username.label }}</label>
+                  {{ form.username }}
+                  {% for error in form.username.errors %}
+                  <p class="help-block">{{ error }}</p>
+                  {% endfor %}
+                </div>
+                <div class="form-group{% if form.email.errors %} invalid{% endif %}">
+                  <label for="{{ form.email.id_for_label }}" class="{% if form.email.field.required %}required{% endif %}">{{ form.email.label }}</label>
+                  {{ form.email }}
+                  {% for error in form.email.errors %}
+                  <p class="help-block">{{ error }}</p>
+                  {% endfor %}
+                </div>
+                <div class="form-group{% if form.password1.errors %} invalid{% endif %}">
+                  <label for="{{ form.password1.id_for_label }}" class="{% if form.password1.field.required %}required{% endif %}">{{ form.password1.label }}</label>
+                  {{ form.password1 }}
+                  {% for error in form.password1.errors %}
+                  <p class="help-block">{{ error }}</p>
+                  {% endfor %}
+                </div>
+                <div class="form-group{% if form.password2.errors %} invalid{% endif %}">
+                  <label for="{{ form.password2.id_for_label }}" class="{% if form.password2.field.required %}required{% endif %}">{{ form.password2.label }}</label>
+                  {{ form.password2 }}
+                  {% for error in form.password2.errors %}
+                  <p class="help-block">{{ error }}</p>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-12">
+              <div class="p-2 rounded bg-light">
+                <h5 class="mb-4 py-2 text-center bg-{{ options.theme_color }} rounded">AFP/CAA Member Information</h5>
+                <div class="row">
+                  <div class="form-group col-lg-4{% if afpcaaForm.member_first_name.errors %} invalid{% endif %}">
+                    <label for="{{ afpcaaForm.member_first_name.id_for_label }}"
+                      class="{% if afpcaaForm.member_first_name.field.required %}required{% endif %}">{{ afpcaaForm.member_first_name.label }}</label>
+                    {{ afpcaaForm.member_first_name }}
+                    {% for error in afpcaaForm.member_first_name.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-4{% if afpcaaForm.member_last_name.errors %} invalid{% endif %}">
+                    <label for="{{ afpcaaForm.member_last_name.id_for_label }}"
+                      class="{% if afpcaaForm.member_last_name.field.required %}required{% endif %}">{{ afpcaaForm.member_last_name.label }}</label>
+                    {{ afpcaaForm.member_last_name }}
+                    {% for error in afpcaaForm.member_last_name.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-4{% if afpcaaForm.member_rank.errors %} invalid{% endif %}">
+                    <label for="{{ afpcaaForm.member_rank.id_for_label }}"
+                      class="{% if afpcaaForm.member_rank.field.required %}required{% endif %}">{{ afpcaaForm.member_rank.label }}</label>
+                    {{ afpcaaForm.member_rank }}
+                    {% for error in afpcaaForm.member_rank.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-4{% if afpcaaForm.member_bos.errors %} invalid{% endif %}">
+                    <label for="{{ afpcaaForm.member_bos.id_for_label }}"
+                      class="{% if afpcaaForm.member_bos.field.required %}required{% endif %}">{{ afpcaaForm.member_bos.label }}</label>
+                    {{ afpcaaForm.member_bos }}
+                    {% for error in afpcaaForm.member_bos.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-4{% if afpcaaForm.afpsn.errors %} invalid{% endif %}">
+                    <label for="{{ afpcaaForm.afpsn.id_for_label }}"
+                      class="{% if afpcaaForm.afpsn.field.required %}required{% endif %}">{{ afpcaaForm.afpsn.label }}</label>
+                    {{ afpcaaForm.afpsn }}
+                    {% for error in afpcaaForm.afpsn.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-4{% if afpcaaForm.mil_status.errors %} invalid{% endif %}">
+                    <label for="{{ afpcaaForm.mil_status.id_for_label }}"
+                      class="{% if afpcaaForm.mil_status.field.required %}required{% endif %}">{{ afpcaaForm.mil_status.label }}</label>
+                    {{ afpcaaForm.mil_status }}
+                    {% for error in afpcaaForm.mil_status.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-4{% if afpcaaForm.member_classification.errors %} invalid{% endif %}">
+                    <label for="{{ afpcaaForm.member_classification.id_for_label }}"
+                      class="{% if afpcaaForm.member_classification.field.required %}required{% endif %}">{{ afpcaaForm.member_classification.label }}</label>
+                    {{ afpcaaForm.member_classification }}
+                    {% for error in afpcaaForm.member_classification.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-4{% if profileForm.afpcaa_relationship.errors %} invalid{% endif %}">
+                    <label for="{{ profileForm.afpcaa_relationship.id_for_label }}"
+                      class="{% if profileForm.afpcaa_relationship.field.required %}required{% endif %}">{{ profileForm.afpcaa_relationship.label }}</label>
+                    {{ profileForm.afpcaa_relationship }}
+                    {% for error in profileForm.afpcaa_relationship.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-12">
+              <div class="p-2 rounded bg-light">
+                <h5 class="mb-4 py-2 text-center bg-{{ options.theme_color }} rounded">Guardian Information</h5>
+                <div class="row">
+                  <div class="form-group col-lg-4{% if guardianForm.guardian_first_name.errors %} invalid{% endif %}">
+                    <label for="{{ guardianForm.guardian_first_name.id_for_label }}"
+                      class="{% if guardianForm.guardian_first_name.field.required %}required{% endif %}">{{ guardianForm.guardian_first_name.label }}</label>
+                    {{ guardianForm.guardian_first_name }}
+                    {% for error in guardianForm.guardian_first_name.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-lg-4{% if guardianForm.guardian_last_name.errors %} invalid{% endif %}">
+                    <label for="{{ guardianForm.guardian_last_name.id_for_label }}"
+                      class="{% if guardianForm.guardian_last_name.field.required %}required{% endif %}">{{ guardianForm.guardian_last_name.label }}</label>
+                    {{ guardianForm.guardian_last_name }}
+                    {% for error in guardianForm.guardian_last_name.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row d-flex justify-content-center">
+            <div class="col-xl-3 col-lg-4 col-md-6">
+              <div class="form-group mb-3 captcha-box">
+                {{ form.captcha }}
+                {% if form.captcha.errors %}
+                {% for captcha_error in form.captcha.errors %}
+                <p class="h6 text-danger text-center">{{ captcha_error }}</p>
+                {% endfor %}
+                {% endif %}
+              </div>
+            </div>
+         </div>          
+          <div class="row">
+            <div class="col">
+              <button type="submit" class="btn btn-primary btn-block">Register</button>
+            </div>
+          </div>
+        </form>
+
+
+        {% if messages %}
+        <br>
+        {% for message in messages %}
+        {% if message.tags == 'error' %}
+        <div class="alert alert-danger">
+          {% else %}
+          <div class="alert alert-{{ message.tags }}">
+            {% endif %}
+            {{ message }}
+          </div>
+          {% endfor %}
+          {% endif %}
+
+          <p class="mb-0">
+            <a href="{% url 'login' %}" class="text-center">I already have an account</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- jQuery -->
+  <script src="{% static 'admin-lte/plugins/jquery/jquery.min.js' %}"></script>
+  <!-- Bootstrap 4 -->
+  <script src="{% static 'admin-lte/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <!-- Select2 -->
+  <script src="{% static 'admin-lte/plugins/select2/js/select2.full.min.js' %}"></script>
+  <!-- AdminLTE App -->
+  <script src="{% static 'admin-lte/dist/js/adminlte.min.js' %}"></script>
+  <script>
+    $('.captcha').click(function () {
+      $.getJSON("/captcha/refresh/", function (result) {
+        $('.captcha').attr('src', result['image_url']);
+        $('#id_captcha_0').val(result['key'])
+      });
+    });
+
+    $('.captcha-box img').addClass('d-block mx-auto').after('<p class="h6 font-italic text-info text-center">Click the image to refresh</ class="h6">')
+    $('.captcha-box [type=text]').addClass('form-control text-center mt-1').attr('placeholder', "Enter Validation Code")
+
+    $('.select2').select2({
+      placeholder: "Choose from the list",
+      readonly: true,
+      allowClear: true,
+    })
+  </script>
+</body>
+
+</html>

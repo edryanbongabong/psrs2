@@ -1,0 +1,264 @@
+{% extends 'includes/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content pt-2">
+  {% for message in messages %}
+    {% if message.tags == 'error' %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="danger">
+    {% else %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="{{ message.tags }}">
+    {% endif %}
+  {% endfor %}
+  {% if personnel %}
+    <div class="row">
+      <div class="col-lg-8 col-md-6">
+        <div class="row">
+          <div class="col-5 align-self-stretch">
+            <div class="card w-100">
+              <div class="card-body text-center">
+                <h1 class="countUp mb-0">{{ personnel.total }}</h1>
+                <small>Overall Total Strength (<strong>{{ personnel.current_unit }}</strong>)</small>
+              </div>
+            </div>
+            <div class="card w-100">
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-borderless table-sm m-0 w-100">
+                    <tbody>
+                      {% for profile in personnel.profiles %}
+                        <tr>
+                          <td style="width: 50px;" class="text-right"><span class="badge badge-{{ profile.color }}">{{ profile.profile }}</span></td>
+                          <td>
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-animated bg-secondary" role="progressbar" style="width: {{ profile.width }}%;" aria-valuenow="{{ profile.width }}" aria-valuemin="0" aria-valuemax="100">{{ profile.width }}%</div>
+                            </div>
+                          </td>
+                          <td style="width: 30px;" class="text-right pr-0 font-weight-bold countUp">{{ profile.count }}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="card card-{{ options.theme_color }} card-outline">          
+              <div class="card-header border-0 pb-0">
+                <h3 class="card-title"><i class="fas fa-chart-pie mr-1"></i>Category</h3>
+                <div class="card-tools m-0">
+                  <select name="cat" id="cat" class="form-control select2-noclear select2-{{ options.theme_color }}" data-dropdown-css-class="select2-{{ options.theme_color }}" style="width: 100%;">
+                    <option value="profile">Profile</option>
+                    <option value="rank">Rank</option>
+                    <option value="bos">BOS</option>
+                    <option value="status_assignment">SOA</option>
+                    <option value="office">Unit</option>
+                    <option value="sex">Sex</option>
+                  </select>
+                </div>
+              </div>
+              <div class="card-body">
+                <canvas class="chart" id="cat-chart-canvas" style="height: calc(100vh - 34.2em); max-width: 100%;"></canvas>
+                <!-- <canvas id="myPieChart" width="486" height="245" style="display: block; width: 486px; height: 245px;" class="chartjs-render-monitor"></canvas> -->
+              </div>
+            </div>
+          </div>
+          <div class="col-7 align-self-stretch">
+            <div class="card card-{{ options.theme_color }} card-outline mb-lg-0">
+              <div class="card-header border-0 pb-0">
+                <h3 class="card-title">
+                  <i class="fas fa-chart-bar mr-1"></i>
+                  AFP Fill-up
+                </h3>
+              </div>
+              <div class="card-body p-0">
+                <table class="table table-sm table-hover">
+                  <thead>
+                    <tr class="table-primary">
+                      <th class="text-center font-weight-bold">Rank Grade</th>
+                      <th class="text-center font-weight-bold">PA</th>
+                      <th class="text-center font-weight-bold">PN</th>
+                      <th class="text-center font-weight-bold">PAF</th>
+                      <th class="text-center font-weight-bold">TAS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for profile_type, profile_type_data in personnel.fillup.items %}
+                      <tr>
+                        <td class="font-weight-bold text-center table-secondary" colspan="5">{{ profile_type }}</td>
+                      </tr>
+                      {% for grade, grade_data in profile_type_data.items %}
+                        <tr class="">
+                          {% if grade == 'total' %}
+                            <td class="font-weight-bold text-center">Total</td>
+                            {% for data in grade_data %}
+                              <td class="font-weight-bold text-center">{{ data }}</td>
+                            {% endfor %}
+                          {% else %}
+                            <td class="font-weight-bold text-center">{{ grade }}</td>
+                            {% for x, data in grade_data.items %}
+                              <td class="text-center">{% if data %}{{ data }}{% endif %}</td>
+                            {% endfor %}
+                          {% endif %}
+                        </tr>
+                      {% endfor %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% if submission %}
+        <div class="card card-{{ options.theme_color }} card-outline mb-lg-0">
+          <div class="card-header border-0 pb-0">
+            <h3 class="card-title">
+              <i class="fas fa-tasks mr-1"></i>
+              Submission Summary
+            </h3>
+          </div>
+          <div class="card-body p-0">
+            <table class="table table-sm table-hover">
+              <thead>
+                <tr class="table-primary">
+                  <th class="text-center font-weight-bold">Unit</th>
+                  <th class="text-center font-weight-bold">Total Strength</th>
+                  <th class="text-center font-weight-bold">Status</th>
+                  <th class="text-center font-weight-bold">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in submission.subdata %}
+                <tr>
+                  {% for key, value in row.items %}
+                  <td class="text-center">{{ value|safe }}</td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+                {% comment %}
+                <?php $total = 0;
+                  foreach ($submission as $row) : 
+                  $total += intval($row['strength']); ?>
+                  <tr>
+                  <?php foreach ($row as $col) : ?>
+                    <td class="text-center"><?= $col ?></td>                    
+                  <?php endforeach; ?>
+                  </tr>
+                <?php endforeach; ?>
+                {% endcomment %}
+              </tbody>
+              <tfoot>
+                <tr class="table-primary">
+                  <th class="text-center">TOTAL</th>
+                  <th class="text-center">{{ submission.total }}</th>
+                  <th class="text-center"></th>
+                  <th class="text-center"></th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <div class="card card-widget card-{{ options.theme_color }} card-outline mb-lg-0">
+          <div class="card-header ">
+            <h2 class="card-title">Recent Activities </h2>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="timeline">
+                  {% for movement in movements %}
+                    {% if movement.office1 and movement.soa1 %}
+                    <div>
+                      <i class="fas fa-exchange-alt bg-green "></i>
+                      <div class="timeline-item">
+                        <span class="time"><i class="fas fa-clock"></i> {{ movement.date }}</span>
+                        <div class="timeline-body">
+                          <strong>{{ movement.updated_by }}</strong> updated the record of <strong>{{ movement.personnel }}</strong> from <strong>{{ movement.office1 }} ({{ movement.soa1 }})</strong> to <strong>{{ movement.office2 }} ({{ movement.soa2 }})</strong>.
+                        </div>
+                      </div>
+                    </div>
+                    {% else %}
+                    <div>
+                      <i class="fas fa-plus bg-blue "></i>
+                      <div class="timeline-item">
+                        <span class="time"><i class="fas fa-clock"></i> {{ movement.date }}</span>
+                        <div class="timeline-body">
+                          <strong>{{ movement.updated_by }}</strong> added the record of <strong>{{ movement.personnel }}</strong> to <strong>{{ movement.office2 }} ({{ movement.soa2 }})</strong>.
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
+                  {% empty %}
+                    <div class="text-center text-muted">
+                      <p class="mb-0">No recent activities found</p>
+                    </div>
+                  {% endfor %}
+                </div>                        
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="jumbotron jumbotron-fluid rounded">
+      <div class="container text-center">
+        <h1 class="display-4">Sorry!</h1>
+        <p class="lead">No available records found</p>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+<script type="text/javascript">
+  $(function () {
+    'use strict'
+    var myData = {cat: $('[name=cat]').val(), csrfmiddlewaretoken: '{{ csrf_token }}' };
+    var ctx = $('#cat-chart-canvas').get(0).getContext("2d");
+    var chart = new Chart(ctx, {
+            type: 'doughnut'
+          });
+    $(document).on('change', '#cat', function(){
+      myData.cat = $(this).val();
+      var fd = new FormData();
+      $.each(myData, function(k,v){
+        fd.append(k,v);
+      });
+      $.ajax({
+        url: 'donut-ajax-category/' + myData.cat + '/',
+        // data: fd,
+        type:'GET',
+        dataType: "json",
+        contentType:false,
+        processData:false,
+        beforeSend: function () {
+          $('#spinner-div').removeClass('invisible')
+        },
+        complete: function () {
+          $('#spinner-div').addClass('invisible')
+        },
+        success: function(jsonResponse) {
+          const labels = jsonResponse.data.labels;
+          const datasets = jsonResponse.data.datasets;
+          chart.data.datasets = [];
+          chart.data.labels = [];
+          chart.data.labels = labels;
+          datasets.forEach(dataset => {
+            chart.data.datasets.push(dataset);
+          });
+          chart.update();              
+        }
+      });     
+    })
+  });
+
+  $(document).ready(function(){
+    $('#cat').trigger('change');
+  });
+</script>
+{% endblock extra_js %}

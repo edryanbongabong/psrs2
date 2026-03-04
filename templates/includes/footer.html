@@ -1,0 +1,101 @@
+{% load static %}
+<!-- jQuery -->
+<script src="{% static 'admin-lte/plugins/jquery/jquery.min.js' %}"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="{% static 'admin-lte/plugins/jquery-ui/jquery-ui.min.js' %}"></script>
+<!-- Popper -->
+<!-- <script src="{% static 'admin-lte/plugins/popper/popper.min.js' %}"></script> -->
+<!-- Bootstrap 4 -->
+<script src="{% static 'admin-lte/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Bootstrap 4 Modal -->
+<script src="{% static 'js/jquery.bootstrap.modal.forms.min.js' %}"></script>
+<!-- Select2 -->
+<script src="{% static 'admin-lte/plugins/select2/js/select2.full.min.js' %}"></script>
+<!-- InputMask -->
+<script src="{% static 'admin-lte/plugins/moment/moment.min.js' %}"></script>
+<script src="{% static 'admin-lte/plugins/inputmask/min/jquery.inputmask.bundle.min.js' %}"></script>
+<!-- jquery-validation -->
+<script src="{% static 'admin-lte/plugins/jquery-validation/jquery.validate.min.js' %}"></script>
+<script src="{% static 'admin-lte/plugins/jquery-validation/additional-methods.min.js' %}"></script>
+<!-- SweetAlert2 -->
+<script src="{% static 'admin-lte/plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+<!-- pace-progress -->
+<script src="{% static 'admin-lte/plugins/pace-progress/pace.min.js' %}"></script>
+<!-- Bootstrap Switch -->
+<script src="{% static 'admin-lte/plugins/bootstrap-switch/js/bootstrap-switch.min.js' %}"></script>
+<!-- bs-custom-file-input -->
+<script src="{% static 'admin-lte/plugins/bs-custom-file-input/bs-custom-file-input.min.js' %}"></script>
+<!-- summernote -->
+<script src="{% static 'admin-lte/plugins/summernote/summernote-bs4.min.js' %}"></script>
+<!-- Ajax Datatables -->
+<script src="{% static 'ajax_datatable/js/utils.js' %}"></script>
+<!-- Datatables -->
+<script src="{% static 'admin-lte/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'admin-lte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<!-- CountUp -->
+<script src="{% static 'js/countUp.min.js' %}" type="module"></script>
+<script src="{% static 'js/main.js' %}" type="module"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'admin-lte/dist/js/adminlte.min.js' %}"></script>
+{% if uri %}
+<script src="{% static 'js/'|add:uri|add:'.js'|lower %}"></script>
+{% endif %}
+<!-- Page script -->
+<script>
+  // SweetAlert2
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 1500,
+    timerProgressBar: true,
+    onOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  })
+  const Confirm = Swal.mixin({
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Yes',
+    cancelButtonText: 'No',
+    reverseButtons: true
+  })
+
+  $(function () {
+
+    'use strict'
+
+    bsCustomFileInput.init()
+
+    $('[data-toggle="tooltip"]').tooltip()
+
+    //Initialize Select2 Elements
+    $('.select2').select2({
+      placeholder: "Choose from the list",
+      readonly: true,
+      allowClear: true,
+    })
+    $('.select2-noclear').select2({
+      placeholder: "Choose from the list",
+      readonly: true,
+    })
+
+    //Input mask
+    $('[data-mask]').inputmask()
+
+    $("input[data-bootstrap-switch]").not('[data-switch-no-init]').bootstrapSwitch()
+
+    $.each($('[name="message[]"]'), function () {
+      Toast.fire({
+        icon: $(this).data('tags'),
+        title: $(this).val(),
+      });
+    });
+  })
+  function numberFormat(number) {
+    var parts = number.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
+  }
+</script>

@@ -1,0 +1,123 @@
+{% load static %}
+<div class="modal-header py-2 bg-{{ options.theme_color }}">
+  <h4 class="modal-title">View Personnel Details <span class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modal-legend">Legend</span></h4>
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="row mb-3">
+    <div class="col widget-user-2">
+      <div class="widget-user-header">
+        <div class="float-left">
+          <div class="widget-user-image">
+            <img class="img-circle elevation-2" src="{% static 'images/default-profile-user.png' %}" alt="User Avatar">
+          </div>
+          <h3 class="widget-user-username d-name">{{ data }}</h3>
+          <h5 class="widget-user-desc d-flex">
+            <span class="badge badge-light mr-1 d-is_active">{% if data.is_active %}Active{% else %}Inactive{% endif %}</span>
+            <span class="badge badge-light mr-1 d-profile">{{ data.profile }}</span>
+            <span class="badge badge-light mr-1 d-sex">{% if data.sex == 'M' %}<i class="fas fa-mars text-info" title="Male"></i>{% else %}<i class="fas fa-venus text-pink" title="Female"></i>{% endif %}</span>
+          </h5>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-6">
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">Plantilla Item No</small>
+        <h5 class="font-weight-normal">{% if data.item_no %}{{data.item_no}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">DOB</small>
+        <h5 class="font-weight-normal">{% if data.dob %}{{data.dob | date:'d M Y'}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">Office/Unit</small>
+        <h5 class="font-weight-normal">{% if data.office %}{{data.office}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">Position Title</small>
+        <h5 class="font-weight-normal">{% if data.position %}{{data.position}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">Designation</small>
+        <h5 class="font-weight-normal">{% if data.desig %}{{data.desig}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">SOA</small>
+        <h5 class="font-weight-normal">{% if data.status_assignment %}{{data.status_assignment}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">Temporary Unit</small>
+        <h5 class="font-weight-normal">{% if data.ds_unit %}{{data.ds_unit}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">AFPOS</small>
+        <h5 class="font-weight-normal">{% if data.fos %}{{data.fos}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">DAGHQ</small>
+        <h5 class="font-weight-normal">{% if data.daghq %}{{data.daghq | date:'d M Y'}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">DAPDA</small>
+        <h5 class="font-weight-normal">{% if data.dapda %}{{data.dapda | date:'d M Y'}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">RRFCD</small>
+        <h5 class="font-weight-normal">{% if data.rrfcd %}{{data.rrfcd}}{% else %}-{% endif %}</h5>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">Skills</small>
+        <h5 class="font-weight-normal">{% if data.skills %}{{data.skills}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">DOT</small>
+        <h5 class="font-weight-normal">{% if data.dot %}{{data.dot | date:'d M Y'}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">DOC</small>
+        <h5 class="font-weight-normal">{% if data.doc %}{{data.doc | date:'d M Y'}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">DOLP</small>
+        <h5 class="font-weight-normal">{% if data.dolp %}{{data.dolp | date:'d M Y'}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">HCC</small>
+        <h5 class="font-weight-normal">{% if data.hcc %}{{data.hcc}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">SOC</small>
+        <h5 class="font-weight-normal">{% if data.soc %}{{data.soc}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">DORET</small>
+        <h5 class="font-weight-normal">{% if data.doret %}{{data.doret | date:'d M Y'}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">AUTH</small>
+        <h5 class="font-weight-normal">{% if data.auth %}{{data.auth}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">ACT</small>
+        <h5 class="font-weight-normal">{% if data.act %}{{data.act}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">Vacant</small>
+        <h5 class="font-weight-normal">{% if data.vacant %}{{data.vacant}}{% else %}-{% endif %}</h5>
+      </div>
+      <div class="p-2 rounded shadow-sm mt-2">
+        <small class="font-weight-bold text-muted">CTI</small>
+        <h5 class="font-weight-normal">{% if data.cti %}{{data.cti}}{% else %}-{% endif %}</h5>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+</div>

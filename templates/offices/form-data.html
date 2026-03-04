@@ -1,0 +1,280 @@
+{% load custom_filters %}
+{% load widget_tweaks %}
+<form method="post" action="" id="form-data">
+  {% csrf_token %}
+  <div class="modal-header bg-{{ options.theme_color }}">
+    <h5 class="modal-title my-0">{{ mode|title }} {{ segment|title}}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col">
+        <div class="form-group{% if form.office.errors %} invalid{% endif %}">
+          <label for="{{ form.office.id_for_label }}" class="{% if form.office.field.required %} required{% endif %}">{{ form.office.label }}</label>
+          {{ form.office }}
+          {% for error in form.office.errors %}
+          <p class="help-block">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div class="form-group{% if form.office_name.errors %} invalid{% endif %}">
+          <label for="{{ form.office_name.id_for_label }}" class="{% if form.office_name.field.required %} required{% endif %}">{{ form.office_name.label }}</label>
+          {{ form.office_name }}
+          {% for error in form.office_name.errors %}
+          <p class="help-block">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div class="form-group{% if form.office_category.errors %} invalid{% endif %}">
+          <label for="{{ form.office_category.id_for_label }}" class="{% if form.office_category.field.required %} required{% endif %}">{{ form.office_category.label }}</label>
+          {{ form.office_category }}
+          {% for error in form.office_category.errors %}
+          <p class="help-block">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div class="form-group{% if form.program.errors %} invalid{% endif %}">
+          <label for="{{ form.program.id_for_label }}" class="{% if form.program.field.required %} required{% endif %}">{{ form.program.label }}</label>
+          {{ form.program }}
+          {% for error in form.program.errors %}
+          <p class="help-block">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div class="form-group{% if form.parent.errors %} invalid{% endif %}">
+          <label for="{{ form.parent.id_for_label }}" class="{% if form.parent.field.required %} required{% endif %}">{{ form.parent.label }}</label>
+          {{ form.parent }}
+          {% for error in form.parent.errors %}
+          <p class="help-block">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div class="form-group{% if form.is_school.errors %} invalid{% endif %}">
+          <label for="{{ form.is_school.id_for_label }}" class="{% if form.is_school.field.required %} required{% endif %}">{{ form.is_school.label }}</label>
+          <div class="custom-control custom-switch">
+            {{ form.is_school.as_widget }}
+            <label class="custom-control-label" for="{{ form.is_school.id_for_label }}">&nbsp;</label>
+          </div>
+          {% for error in form.is_school.errors %}
+          <p class="help-block">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div class="form-group{% if form.is_medical.errors %} invalid{% endif %}">
+          <label for="{{ form.is_medical.id_for_label }}" class="{% if form.is_medical.field.required %} required{% endif %}">{{ form.is_medical.label }}</label>
+          <div class="custom-control custom-switch">
+            {{ form.is_medical.as_widget }}
+            <label class="custom-control-label" for="{{ form.is_medical.id_for_label }}">&nbsp;</label>
+          </div>
+          {% for error in form.is_medical.errors %}
+          <p class="help-block">{{ error }}</p>
+          {% endfor %}
+        </div>
+        <div class="form-group{% if form.is_active.errors %} invalid{% endif %}">
+          <label for="{{ form.is_active.id_for_label }}" class="{% if form.is_active.field.required %} required{% endif %}">{{ form.is_active.label }}</label>
+          <div class="custom-control custom-switch">
+            {{ form.is_active.as_widget }}
+            <label class="custom-control-label" for="{{ form.is_active.id_for_label }}">&nbsp;</label>
+          </div>
+          {% for error in form.is_active.errors %}
+          <p class="help-block">{{ error }}</p>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="col">
+        <h5 class="mb-0 font-weight-bold text-center">T.O. (Officers)</h5>
+        <table class="table table-borderless table-hover table-sm bg-light calculation-group" id="tbl-officer" data-prefix="o">
+          <thead>
+            <tr>
+              <th class="text-center" style="width: auto;">Grade</th>
+              <th class="text-center" style="width: 80px;">BI</th>
+              <th class="text-center" style="width: 80px;">PA</th>
+              <th class="text-center" style="width: 80px;">PAF</th>
+              <th class="text-center" style="width: 80px;">PN</th>
+              <th class="text-center" style="width: 80px;">TAS</th>
+              <th class="text-center" style="width: 80px;">Sub-total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% with total_items="1234567891"|make_list %}
+              {% for i in total_items %}
+                {# Handle padding for single digits (e.g., 1 becomes 01) #}
+                {% with index=forloop.revcounter|stringformat:"02d" index2=forloop.revcounter %}
+                  {% with obi_name="obi"|add:index opa_name="opa"|add:index opaf_name="opaf"|add:index opn_name="opn"|add:index otas_name="otas"|add:index %}
+                    <tr class="data-row">
+                      <td class="text-center">O-{{ index2 }}</td>
+                      <td class="text-right">{{ form|get_item:obi_name|add_class:"count-input col-bi" }}</td>
+                      <td class="text-right">{{ form|get_item:opa_name|add_class:"count-input col-pa" }}</td>
+                      <td class="text-right">{{ form|get_item:opaf_name|add_class:"count-input col-paf" }}</td>
+                      <td class="text-right">{{ form|get_item:opn_name|add_class:"count-input col-pn" }}</td>
+                      <td class="text-right">{{ form|get_item:otas_name|add_class:"count-input col-tas" }}</td>
+                      <td class="text-right font-weight-bold subtotal"></td>
+                    </tr>
+                  {% endwith %}
+                {% endwith %}
+              {% endfor %}
+            {% endwith %}
+            <tr>
+              <td class="text-center font-weight-bold">Total</td>
+              <td class="text-right font-weight-bold total-bi"></td>
+              <td class="text-right font-weight-bold total-pa"></td>
+              <td class="text-right font-weight-bold total-paf"></td>
+              <td class="text-right font-weight-bold total-pn"></td>
+              <td class="text-right font-weight-bold total-tas"></td>
+              <td class="text-right font-weight-bold grand-total"></td>
+            </tr>
+          </tbody>
+        </table>
+        <h5 class="mb-0 font-weight-bold text-center">T.O. (Enlisted)</h5>
+        <table class="table table-borderless table-hover table-sm bg-light calculation-group" id="tbl-ep" data-prefix="e">
+          <thead>
+            <tr>
+              <th class="text-center" style="width: auto;">Grade</th>
+              <th class="text-center" style="width: 80px;">BI</th>
+              <th class="text-center" style="width: 80px;">PA</th>
+              <th class="text-center" style="width: 80px;">PAF</th>
+              <th class="text-center" style="width: 80px;">PN</th>
+              <th class="text-center" style="width: 80px;">TAS</th>
+              <th class="text-center" style="width: 80px;">Sub-total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% with total_items="1234567891"|make_list %}
+              {% for i in total_items %}
+                {# Handle padding for single digits (e.g., 1 becomes 01) #}
+                {% with index=forloop.revcounter|stringformat:"02d" index2=forloop.revcounter %}
+                  {% with ebi_name="ebi"|add:index epa_name="epa"|add:index epaf_name="epaf"|add:index epn_name="epn"|add:index %}
+                    <tr class="data-row">
+                      <td class="text-center">E-{{ index2 }}</td>
+                      <td class="text-right">{{ form|get_item:ebi_name|add_class:"count-input col-bi" }}</td>
+                      <td class="text-right">{{ form|get_item:epa_name|add_class:"count-input col-pa" }}</td>
+                      <td class="text-right">{{ form|get_item:epaf_name|add_class:"count-input col-paf" }}</td>
+                      <td class="text-right">{{ form|get_item:epn_name|add_class:"count-input col-pn" }}</td>
+                      <td class="text-right"></td>
+                      <td class="text-right font-weight-bold subtotal"></td>
+                    </tr>
+                  {% endwith %}
+                {% endwith %}
+              {% endfor %}
+            {% endwith %}
+            <tr>
+              <td class="text-center font-weight-bold">Total</td>
+              <td class="text-right font-weight-bold total-bi"></td>
+              <td class="text-right font-weight-bold total-pa"></td>
+              <td class="text-right font-weight-bold total-paf"></td>
+              <td class="text-right font-weight-bold total-pn"></td>
+              <td class="text-right font-weight-bold total-tas"></td>
+              <td class="text-right font-weight-bold grand-total"></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="summary-section" style="margin-top: 30px;">
+          <h5 class="mb-0 font-weight-bold text-center">AGG-TOTAL</h5>
+          <table class="table table-borderless table-hover table-sm">
+            <thead>
+              <tr>
+                <th class="text-center" style="width: auto;">Grade</th>
+                <th class="text-center" style="width: 80px;">BI</th>
+                <th class="text-center" style="width: 80px;">PA</th>
+                <th class="text-center" style="width: 80px;">PAF</th>
+                <th class="text-center" style="width: 80px;">PN</th>
+                <th class="text-center" style="width: 80px;">TAS</th>
+                <th class="text-center" style="width: 80px;">Grand Total</th>
+              </tr>
+            </thead>
+            <tbody class="bg-info">
+              <tr>
+                <td style="font-size: 20px;" class="text-center font-weight-bold">TOTAL</td>
+                <td style="font-size: 20px;" class="text-right font-weight-bold subtotal" id="global-total-bi"></td>
+                <td style="font-size: 20px;" class="text-right font-weight-bold subtotal" id="global-total-pa"></td>
+                <td style="font-size: 20px;" class="text-right font-weight-bold subtotal" id="global-total-paf"></td>
+                <td style="font-size: 20px;" class="text-right font-weight-bold subtotal" id="global-total-pn"></td>
+                <td style="font-size: 20px;" class="text-right font-weight-bold subtotal" id="global-total-tas"></td>
+                <td style="font-size: 20px;" class="text-right font-weight-bold subtotal" id="absolute-grand-total"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="submit" class="btn btn-primary">{{ mode|title }}</button>
+  </div>
+</form>
+<script>
+  $(document).ready(function () {
+    $('.select2').select2({
+      placeholder: "Choose from the list",
+      readonly: true,
+      allowClear: true,
+    });
+
+    function updateGlobalSummary() {
+        let globalBI = 0;
+        let globalPA = 0;
+        let globalPAF = 0;
+        let globalPN = 0;
+        let globalTAS = 0;
+        let absoluteTotal = 0;
+
+        // Loop through every table group to aggregate their results
+        $('.calculation-group').each(function() {
+            globalBI += parseFloat($(this).find('.total-bi').text()) || 0;
+            globalPA += parseFloat($(this).find('.total-pa').text()) || 0;
+            globalPAF += parseFloat($(this).find('.total-paf').text()) || 0;
+            globalPN += parseFloat($(this).find('.total-pn').text()) || 0;
+            globalTAS += parseFloat($(this).find('.total-tas').text()) || 0;
+            absoluteTotal += parseFloat($(this).find('.grand-total').text()) || 0;
+        });
+
+        // Update the summary table
+        $('#global-total-bi').text(globalBI);
+        $('#global-total-pa').text(globalPA);
+        $('#global-total-paf').text(globalPAF);
+        $('#global-total-pn').text(globalPN);
+        $('#global-total-tas').text(globalTAS);
+        $('#absolute-grand-total').text(absoluteTotal);
+    }
+
+    function calculateGroupTotals($table) {
+        let groupGrandTotal = 0;
+
+        // 1. Row Sub-totals
+        $table.find('.data-row').each(function() {
+            let rowSum = 0;
+            $(this).find('.count-input').each(function() {
+                let val = parseFloat($(this).val()) || 0;
+                if (val < 0) { $(this).val(0); val = 0; } // Positive numbers only
+                rowSum += val;
+            });
+            $(this).find('.subtotal').text(rowSum);
+            groupGrandTotal += rowSum;
+        });
+
+        // 2. Column Totals
+        const cols = ['bi', 'pa', 'paf', 'pn', 'tas']; // Add paf, pn, tas if needed
+        cols.forEach(function(col) {
+            let colSum = 0;
+            $table.find(`.col-${col}`).each(function() {
+                colSum += parseFloat($(this).val()) || 0;
+            });
+            $table.find(`.total-${col}`).text(colSum);
+        });
+
+        $table.find('.grand-total').text(groupGrandTotal);
+
+        // 3. Trigger Global Update whenever a group changes
+        updateGlobalSummary();
+    }
+
+    // Input listeners
+    $(document).on('input', '.count-input', function() {
+        let $parentTable = $(this).closest('.calculation-group');
+        calculateGroupTotals($parentTable);
+    });
+
+    // Initial run for all tables
+    $('.calculation-group').each(function() {
+        calculateGroupTotals($(this));
+    });
+  });
+</script>

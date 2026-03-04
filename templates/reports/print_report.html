@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Print Report</title>
+  <style>
+    @page{
+      size: A4 landscape;
+      margin-top: 0.25in;
+      margin-right: 0.25in;
+      margin-bottom: 0.25in;
+      margin-left: 0.25in;
+      font-family: 'Arial Narrow', Arial, sans-serif !important;
+
+      @bottom-center {
+        content: counter(page) " of " counter(pages);
+        margin-bottom: 65px;
+      }
+    }
+    body{
+      font-family: 'Arial Narrow', Arial, sans-serif !important;
+    }
+    .custom-table{
+      border-collapse: collapse;
+      width: 100%;
+      border: 1px solid black;
+    }
+    .custom-table th, .custom-table td {
+      border: 1px solid black;
+    }
+    .div-signatures{
+      font-family: Arial !important;
+    }
+  </style>
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+</head>
+<body>
+  <h5 class="text-center font-weight-bold mb-1">PERSONNEL STRENGTH REPORT ({{ type }})</h5>
+  <p class="text-center">as of {% if date %}{{ date | date:'d F y' }}{% else %}____________{% endif %}</p>
+  <table class="custom-table" style="width: 100%;">
+    <thead>
+      <tr>
+        <th class="text-center">#</th>
+        <th class="text-center">NAME</th>
+        <th class="text-center">PROFILE</th>
+        <th class="text-center">UNIT</th>
+        <th class="text-center">SEX</th>
+        <th class="text-center">DOB</th>
+        <th class="text-center">DOC</th>
+        <th class="text-center">DORET</th>
+        <th class="text-center">HCC</th>
+        <th class="text-center">SOA</th>
+        <th class="text-center">TEMP UNIT</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if personnel %}
+        {% for pers in personnel %}
+        <tr>
+          <td class="text-right">{{ forloop.counter }}</td>
+          <td class="text-left">{{ pers }}</td>
+          <td class="text-center">{{ pers.profile }}</td>
+          <td class="text-center">{{ pers.office }}</td>
+          <td class="text-center">{{ pers.sex }}</td>
+          <td class="text-center">{{ pers.dob | date:'d M y' }}</td>
+          <td class="text-center">{{ pers.doc | date:'d M y' }}</td>
+          <td class="text-center">{{ pers.doret | date:'d M y' }}</td>
+          <td class="text-left">{% if pers.hcc %}{{ pers.hcc }}{% endif %}</td>
+          <td class="text-center">{% if pers.soa %}{{ pers.soa }}{% endif %}{% if pers.status_assignment %}{{ pers.status_assignment }}{% endif %}</td>
+          <td class="text-center">{% if pers.ds_unit %}{{ pers.ds_unit }}{% endif %}</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="11" class="text-center">No records found.</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+  <br>
+  {% if report %}
+  <div class="row mx-2 div-signatures">
+    <div class="col">
+      <p class="mb-0 py-0 ">Prepared by:</p>
+      <div class="" style="height: 60px; margin-bottom: -10px;"><img src="{{ report.created_by.users_profile.sign.url }}" style="height: 60px;"></div>
+      <p class="mb-0 py-0" style="line-height: 1.25;">
+        <span class="font-weight-bold">{{ report.created_by.users_profile.sign_name }}</span>
+        {% if report.created_by.users_profile.sign_rank %}<br><span>{{ report.created_by.users_profile.sign_rank }}</span>{% endif %}
+        {% if report.created_by.users_profile.sign_designation %}<br><span>{{ report.created_by.users_profile.sign_designation }}</span>{% endif %}
+      </p>
+    </div>    
+    <div class="col">
+      <p class="mb-0 py-0 ">Approved by:</p>
+      {% if report.approved_by %}
+      <div class="" style="height: 60px; margin-bottom: -10px;"><img src="{{ report.approved_by.users_profile.sign.url }}" style="height: 60px;"></div>
+      <p class="mb-0 py-0" style="line-height: 1.25;">
+        <span class="font-weight-bold">{{ report.approved_by.users_profile.sign_name }}</span>
+        {% if report.approved_by.users_profile.sign_rank %}<br><span>{{ report.approved_by.users_profile.sign_rank }}</span>{% endif %}
+        {% if report.approved_by.users_profile.sign_designation %}<br><span>{{ report.approved_by.users_profile.sign_designation }}</span>{% endif %}
+      </p>
+      {% endif %}
+    </div>    
+  </div>
+  {% else %}
+  <div class="row mx-2 div-signatures">
+    <div class="col">
+      <p class="mb-0 py-0 ">Prepared by:</p>
+      <div class="" style="height: 60px; margin-bottom: -10px;"><img src="{{ user.users_profile.sign.url }}" style="height: 60px;"></div>
+      <p class="mb-0 py-0" style="line-height: 1.25;">
+        <span class="font-weight-bold">{{ user.users_profile.sign_name }}</span>
+        {% if user.users_profile.sign_rank %}<br><span>{{ user.users_profile.sign_rank }}</span>{% endif %}
+        {% if user.users_profile.sign_designation %}<br><span>{{ user.users_profile.sign_designation }}</span>{% endif %}
+      </p>
+    </div>    
+    <div class="col">
+      <p class="mb-0 py-0 ">Approved by:</p>
+    </div>    
+  </div>
+  {% endif %}
+</body>
+</html>

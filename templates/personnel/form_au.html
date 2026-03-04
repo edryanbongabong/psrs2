@@ -1,0 +1,36 @@
+<form method="post" action="" id="frm-data">
+  {% csrf_token %}
+  <div class="modal-header py-2 bg-{{ options.theme_color }}">
+    <h4 class="modal-title">{{ type }}</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    {% if form.errors %}
+      <div class="alert alert-danger">
+        {{ form.errors }}
+      </div>
+    {% endif %}
+    {% for field in form %}
+      <div class="form-group{% if field.errors %} invalid{% endif %}">
+        <label for="{{ field.id_for_label }}" class="font-size-1{% if field.field.required %} required{% endif %}">{{ field.label }}</label>
+        {{ field }}
+        {% for error in field.errors %}
+        <p class="help-block">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-lg btn-primary">Save Changes</button>
+  </div>
+</form>
+
+<script>
+  $('.select2').select2({
+    placeholder: "Choose from the list",
+    readonly: true,
+    allowClear: true,
+  })
+</script>

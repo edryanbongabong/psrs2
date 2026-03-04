@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Age Recap Report</title>
+  <style>
+    @page{
+      size: a4 landscape !important;
+      margin-top: 0.25in;
+      margin-right: 0.25in;
+      margin-bottom: 0.25in;
+      margin-left: 0.25in;
+      font-family: 'Arial Narrow', Arial, sans-serif !important;
+
+      @bottom-center {
+        content: counter(page) " of " counter(pages);
+        margin-bottom: 65px;
+      }
+    }
+    body{
+      font-family: 'Arial Narrow', Arial, sans-serif !important;
+    }
+    .custom-table{
+      border-collapse: collapse;
+      width: 100%;
+      border: 1px solid black;
+    }
+    .custom-table th, .custom-table td {
+      border: 1px solid black;
+    }
+    .div-signatures{
+      font-family: Arial !important;
+    }
+  </style>
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+</head>
+<body>
+  <h5 class="text-center font-weight-bold mb-0">RECAPS ON THE AVERAGE AGE OF FIELD GRADE OF AFP PERSONNEL{% if office_category %} ({{ office_category }}){% endif %}</h5>
+  <p class="text-center">as of {{ report_date|date:"d F Y" }}</p>
+  <table class="custom-table" style="width: 100%;">
+    <thead>
+        <tr>
+            <th class="text-center">GRADE</th>
+            {% for age in age_range %}
+                <th class="text-center">{{ age }}</th>
+            {% endfor %}
+            <th class="text-center">TOTAL</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in matrices.Officer %}
+        <tr>
+            <td class="text-center"><strong>{{ row.rank }}</strong></td>
+            {% for cell in row.columns %}
+                <td class="text-right">{{ cell }}</td>
+            {% endfor %}
+            <td class="text-right"><strong>{{ row.total }}</strong></td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td class="text-center"><strong>SUBTOTAL</strong></td>
+            {% for sub in total_per_age_types.Officer %}
+                <td class="text-right"><strong>{{ sub|default_if_none:"" }}</strong></td>
+            {% endfor %}
+            <td class="text-right"><strong>{{ sub_total_types.Officer }}</strong></td>
+        </tr>
+        {% for row in matrices.EP %}
+        <tr>
+            <td class="text-center"><strong>{{ row.rank }}</strong></td>
+            {% for cell in row.columns %}
+                <td class="text-right">{{ cell }}</td>
+            {% endfor %}
+            <td class="text-right"><strong>{{ row.total }}</strong></td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td class="text-center"><strong>SUBTOTAL</strong></td>
+            {% for sub in total_per_age_types.EP %}
+                <td class="text-right"><strong>{{ sub|default_if_none:"" }}</strong></td>
+            {% endfor %}
+            <td class="text-right"><strong>{{ sub_total_types.EP }}</strong></td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td class="text-center"><strong>AGG-TOTAL</strong></td>
+            {% for sub in grand_total_per_age %}
+                <td class="text-right"><strong>{{ sub|default_if_none:"" }}</strong></td>
+            {% endfor %}
+            <td class="text-right"><strong>{{ grand_total }}</strong></td>
+        </tr>
+    </tfoot>
+</table>
+</body>
+</html>

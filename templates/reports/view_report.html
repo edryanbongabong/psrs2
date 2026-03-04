@@ -1,0 +1,184 @@
+{% extends 'includes/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="content pt-2">
+  {% for message in messages %}
+    {% if message.tags == 'error' %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="danger">
+    {% else %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="{{ message.tags }}">
+    {% endif %}
+  {% endfor %}
+  <div class="card bg-{{ options.theme_color }}">
+    <div class="card-body p-2">
+      <div class="d-flex justify-content-between">
+        <h4 class="mb-0 font-weight-bold ml-2">{{ title }}</h4>
+        {% if request.user|has_group:"Approver" and not report.is_approved %}
+        <div>
+          <form action="{% url 'approve-report' report.id %}" method="post" id="frm_approve" autocomplete="off">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success" form="frm_approve"><i class="fas fa-thumbs-up"></i> Approve</button>
+          </form>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xl-9 col-lg-8 mb-2">
+      <div class="card card-{{ options.theme_color }} card-outline card-outline-tabs mb-0">
+        <div class="card-header p-0 border-bottom-0">
+          <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link font-weight-bold active" id="organic-tab" data-toggle="pill" href="#organic" role="tab" aria-controls="organic" aria-selected="true">Organic Personnel</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link font-weight-bold" id="subunit-tab" data-toggle="pill" href="#subunit" role="tab" aria-controls="subunit" aria-selected="true">Personnel from Sub-units</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link font-weight-bold" id="ds-tab" data-toggle="pill" href="#ds" role="tab" aria-controls="ds" aria-selected="true">DS From Other Units</a>
+            </li>
+            {% if unit.is_school %}
+            <li class="nav-item">
+              <a class="nav-link font-weight-bold" id="students-tab" data-toggle="pill" href="#students" role="tab" aria-controls="students" aria-selected="false">Students</a>
+            </li>
+            {% endif %}
+            {% if unit.is_medical %}
+            <li class="nav-item">
+              <a class="nav-link font-weight-bold" id="patients-tab" data-toggle="pill" href="#patients" role="tab" aria-controls="patients" aria-selected="false">Patients</a>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+        <div class="card-body p-0">
+          <div class="tab-content" id="custom-tabs-three-tabContent">
+            <div class="tab-pane fade show active" id="organic" role="tabpanel" aria-labelledby="organic-tab" style="height: calc(100vh - 16.1em);">
+              <iframe src="{% url 'generate-report' 'ORGANIC' report.id %}" frameborder="0" allowfullscreen width="100%" height="100%" id="frame-organic"></iframe>
+            </div>
+            <div class="tab-pane fade" id="subunit" role="tabpanel" aria-labelledby="subunit-tab" style="height: calc(100vh - 16.1em);">
+              <iframe src="{% url 'generate-report' 'SUBUNIT' report.id %}" frameborder="0" allowfullscreen width="100%" height="100%" id="frame-ds"></iframe>
+            </div>
+            <div class="tab-pane fade" id="ds" role="tabpanel" aria-labelledby="ds-tab" style="height: calc(100vh - 16.1em);">
+              <iframe src="{% url 'generate-report' 'DS' report.id %}" frameborder="0" allowfullscreen width="100%" height="100%" id="frame-ds"></iframe>
+            </div>
+            {% if unit.is_school %}
+            <div class="tab-pane fade" id="students" role="tabpanel" aria-labelledby="students-tab" style="height: calc(100vh - 16.1em);">
+              <iframe src="{% url 'generate-report' 'STUDENTS' report.id %}" frameborder="0" allowfullscreen width="100%" height="100%" id="frame-students"></iframe>
+            </div>
+            {% endif %}
+            {% if unit.is_medical %}
+            <div class="tab-pane fade" id="patients" role="tabpanel" aria-labelledby="patients-tab" style="height: calc(100vh - 16.1em);">
+              <iframe src="{% url 'generate-report' 'PATIENTS' report.id %}" frameborder="0" allowfullscreen width="100%" height="100%" id="frame-patients"></iframe>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-4">
+      <div class="card card-{{ options.theme_color }} bg-white card-outline mb-0 card-comments">
+        <div class="card-header p-0">
+          <h4 class="pl-2 mb-0 nav-link font-weight-bold text-sm">Comments</h4>
+        </div>
+        <div class="card-body p-2" style="max-height: calc(100vh - 21.25em); overflow-y: auto;">
+          {% if comments %}
+            {% for comment in comments %}
+              <div class="comment rounded p-2 mb-2 {% if request.user == comment.updated_by %}bg-light ml-4{%else%}bg-navy-1 mr-4{% endif %}">
+                <p class="font-weight-bold mb-1"><img src="{{ comment.updated_by.users_profile.picture.url }}" alt="Profile" height="20"> {{ comment.updated_by }}</p>
+                <p class="mb-1">{{ comment.comment }}</p>
+                <div class="d-flex justify-content-between">
+                  <small class="text-muted"><i class="far fa-clock"></i> {{ comment.created_at|date:"M d, Y h:i A" }}</small>
+                  {% if request.user == comment.updated_by %}
+                  <small class="btn-delete text-danger d-none"><a href="#" data-form-url="{% url 'delete-comment' comment.id report.id uri %}" class="text-reset">Delete</a></small>
+                  {% endif %}
+                </div>                
+              </div>
+            {% endfor %}
+          {% else %}
+            <p class="text-muted">No comments available.</p>
+          {% endif %}
+        </div>
+        <div class="card-footer px-2">
+          <form action="{% url 'add-comment' report.id %}" method="post" id="frm_comment" autocomplete="off">
+            {% csrf_token %}
+            <div class="input-group">
+              <textarea name="comment" class="form-control form-control-sm" placeholder="Add a comment..." required></textarea>
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-{{ options.theme_color }} btn-sm" form="frm_comment"><i class="fas fa-paper-plane"></i></button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  $(document).ready(function(){
+    
+
+    var $commentsBody = $('.card-comments .card-body');
+    $commentsBody.each(function() {
+      this.scrollTop = this.scrollHeight;
+    });
+
+    $commentsBody.on('mouseenter', '.comment', function() {
+      $(this).find('.btn-delete').removeClass('d-none');
+      $(this).find('.btn-delete').modalForm({ formURL: $(this).data("form-url"), isDeleteForm: true });
+    }).on('mouseleave', '.comment', function() {
+      $(this).find('.btn-delete').addClass('d-none');
+    });
+
+    $commentsBody.find(".btn-delete a").each(function () {
+      $(this).modalForm({ formURL: $(this).data("form-url"), isDeleteForm: true });
+    });
+
+    $(document).on('submit', '#frm_comment', function (e) {
+      e.preventDefault();
+      const form = this;
+
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You are about to submit a comment. Would you like to proceed?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Proceed!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.value) {
+          form.submit(); 
+        }
+      });
+    });
+
+    $(document).on('submit', '#frm_approve', function (e) {
+      e.preventDefault();
+      var form = this;
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You are about to approve a report. Do you want to proceed?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, approve it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.value) {
+          form.submit();
+        }
+      });
+    });
+  });
+</script>
+{% endblock extra_js %}

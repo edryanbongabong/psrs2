@@ -1,0 +1,83 @@
+{% extends 'includes/base.html' %}
+
+{% block content %}
+<div class="content pt-2">
+  {% for message in messages %}
+    {% if message.tags == 'error' %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="danger">
+    {% else %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="{{ message.tags }}">
+    {% endif %}
+  {% endfor %}
+  <div class="card bg-{{ options.theme_color }}">
+    <div class="card-body p-2">
+      <form action="" method="post" id="frm_data" autocomplete="off">{% csrf_token %}</form>
+      <form action="" method="post" id="frm-reports" autocomplete="off">
+        {% csrf_token %}
+        <div class="d-flex justify-content-between">
+          <h4 class="mb-0 font-weight-bold ml-2">{{ title }}</h4>
+          <div class="row div-options" style="width: 500px;">
+            <div class="col-4 justify-content-end d-flex align-middle">Select Date <span class="text-danger">*</span></div>
+            <div class="col-8">
+              <!-- <input type="text" id="date" name="date" class="form-control form-control-sm text-center datepicker-day2" placeholder=". . ." required> -->
+               {{ form.date }}
+            </div>
+          </div>
+          <div>
+            <button type="submit" class="btn btn-default" form="frm_data">Preview Report</button>
+            <button type="submit" class="btn btn-primary" form="frm-reports"><i class="fas fa-save"></i> Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div> 
+  <div class="card card-{{ options.theme_color }} card-outline card-outline-tabs mb-0">
+    <div class="card-header p-0 border-bottom-0">
+      <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link font-weight-bold active" id="organic-tab" data-toggle="pill" href="#organic" role="tab" aria-controls="organic" aria-selected="true">Organic Personnel</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link font-weight-bold" id="subunit-tab" data-toggle="pill" href="#subunit" role="tab" aria-controls="subunit" aria-selected="true">Personnel from Sub-units</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link font-weight-bold" id="ds-tab" data-toggle="pill" href="#ds" role="tab" aria-controls="ds" aria-selected="true">DS From Other Units</a>
+        </li>
+        {% if unit.is_school %}
+        <li class="nav-item">
+          <a class="nav-link font-weight-bold" id="students-tab" data-toggle="pill" href="#students" role="tab" aria-controls="students" aria-selected="false">Students</a>
+        </li>
+        {% endif %}
+        {% if unit.is_medical %}
+        <li class="nav-item">
+          <a class="nav-link font-weight-bold" id="patients-tab" data-toggle="pill" href="#patients" role="tab" aria-controls="patients" aria-selected="false">Patients</a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+    <div class="card-body p-0">
+      <div class="tab-content" id="custom-tabs-three-tabContent">
+        <div class="tab-pane fade show active" id="organic" role="tabpanel" aria-labelledby="organic-tab" style="height: calc(100vh - 15.6em);">
+          <iframe src="{% url 'generate-report' 'ORGANIC' %}" frameborder="0" allowfullscreen width="100%" height="100%" id="frame-organic"></iframe>
+        </div>
+        <div class="tab-pane fade" id="subunit" role="tabpanel" aria-labelledby="subunit-tab" style="height: calc(100vh - 16.1em);">
+          <iframe src="{% url 'generate-report' 'SUBUNIT' %}" frameborder="0" allowfullscreen width="100%" height="100%" id="frame-ds"></iframe>
+        </div>
+        <div class="tab-pane fade" id="ds" role="tabpanel" aria-labelledby="ds-tab" style="height: calc(100vh - 15.6em);">
+          <iframe src="{% url 'generate-report' 'DS' %}" frameborder="0" allowfullscreen width="100%" height="100%" id="frame-ds"></iframe>
+        </div>
+        {% if unit.is_school %}
+        <div class="tab-pane fade" id="students" role="tabpanel" aria-labelledby="students-tab" style="height: calc(100vh - 15.6em);">
+          <iframe src="{% url 'generate-report' 'STUDENTS' %}" frameborder="0" allowfullscreen width="100%" height="100%" id="frame-students"></iframe>
+        </div>
+        {% endif %}
+        {% if unit.is_medical %}
+        <div class="tab-pane fade" id="patients" role="tabpanel" aria-labelledby="patients-tab" style="height: calc(100vh - 15.6em);">
+          <iframe src="{% url 'generate-report' 'PATIENTS' %}" frameborder="0" allowfullscreen width="100%" height="100%" id="frame-patients"></iframe>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

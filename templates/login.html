@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{{ options.app_brand }} | Log in</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Favicon -->
+  <link rel="icon" href="{{ options.app_logo.url }}" type="image/png" sizes="16x16">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{% static 'admin-lte/plugins/fontawesome-free/css/all.min.css' %}">
+  <!-- icheck bootstrap -->
+  <link rel="stylesheet" href="{% static 'admin-lte/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'admin-lte/dist/css/adminlte.min.css' %}">
+  <!-- Google Font: Assistant -->
+  <link rel="stylesheet" href="{% static 'fonts/assistant.css' %}">
+  <!-- Custom CSS -->
+  <link href="{% static 'css/login.css' %}" rel="stylesheet">
+</head>
+
+<body class="hold-transition login-page">
+  <div class="login-box">
+    <div class="login-logo">
+      <a href="{% url 'login' %}">
+        <img src="{{ options.app_logo.url }}" height="80"><br>
+        <strong>{{ options.app_brand }}</span>
+      </a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="card">
+      <div class="card-body login-card-body">
+        <p class="login-box-msg">Sign in to start your session</p>
+
+        <form action="" method="post" autocomplete="off">
+          {% csrf_token %}
+          <div class="input-group mb-3">
+            <input type="text" name="username" class="form-control" placeholder="Username" autofocus required>
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-user"></span>
+              </div>
+            </div>
+          </div>
+          <div class="input-group mb-2">
+            <input type="password" name="password" class="form-control" placeholder="Password" required>
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-lock"></span>
+              </div>
+            </div>
+          </div>
+          <div class="form-group mb-3 captcha-box">
+            {{ form.captcha }}
+            {% if form.captcha.errors %}
+            {% for captcha_error in form.captcha.errors %}
+            <p class="h6 text-danger text-center">{{ captcha_error }}</p>
+            {% endfor %}
+            {% endif %}
+          </div>
+          <div class="row">
+            <div class="col">
+              <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            </div>
+          </div>
+        </form>
+
+
+        {% if messages %}
+        <br>
+        {% for message in messages %}
+        {% if message.tags == 'error' %}
+        <div class="alert alert-danger">
+          {% else %}
+          <div class="alert alert-{{ message.tags }}">
+            {% endif %}
+            {{ message }}
+          </div>
+          {% endfor %}
+          {% endif %}
+
+          <!-- <p class="mb-1">
+            <a href="forgot-password.html">I forgot my password</a>
+          </p>
+          <p class="mb-0">
+            <a href="#" class="text-center">Register a new membership</a>
+          </p> -->
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="{% static 'admin-lte/plugins/jquery/jquery.min.js' %}"></script>
+    <!-- Bootstrap 4 -->
+    <script src="{% static 'admin-lte/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- AdminLTE App -->
+    <script src="{% static 'admin-lte/dist/js/adminlte.min.js' %}"></script>
+    <script>
+      $('.captcha').click(function () {
+        $.getJSON("/captcha/refresh/", function (result) {
+          $('.captcha').attr('src', result['image_url']);
+          $('#id_captcha_0').val(result['key'])
+        });
+      });
+
+      $('.captcha-box img').addClass('d-block mx-auto').after('<p class="h6 font-italic text-info text-center">Click the image to refresh</ class="h6">')
+      $('.captcha-box [type=text]').addClass('form-control text-center mt-1').attr('placeholder', "Enter Validation Code")
+    </script>
+</body>
+
+</html>

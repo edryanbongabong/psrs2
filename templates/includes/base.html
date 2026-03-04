@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+{% include "includes/header.html" %}
+
+<body
+  class="hold-transition sidebar-mini sidebar-collapse layout-footer-fixed layout-navbar-fixed layout-fixed text-sm pace-info">
+  <div id="spinner-div" class="d-flex align-items-center invisible">
+    <div class="spinner-border text-primary mx-auto" role="status"></div>
+  </div>
+  <div class="wrapper"> 
+    {% include "includes/navbar.html" %}
+    {% include "includes/sidebar.html" %}
+    <div class="content-wrapper bg-afp">
+      {% block content %}
+      {% endblock %}
+    </div>
+    <aside class="control-sidebar control-sidebar-dark">
+      <div class="p-3">
+        <h5>Title</h5>
+        <p>Sidebar content</p>
+      </div>
+    </aside>
+
+    <footer class="main-footer text-sm">
+      <div class="float-right d-none d-sm-inline">
+        <strong>Version</strong> 1.0.0
+      </div>
+      <strong>Copyright &copy;2024.</strong> Powered by <a href="#">CEISSAFP</a>
+    </footer>
+  </div>
+  {% include "includes/footer.html" %}
+  {% block extra_js %}{% endblock extra_js %}
+</body>
+
+</html>

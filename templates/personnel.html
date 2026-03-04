@@ -1,0 +1,171 @@
+{% extends 'includes/base.html' %}
+
+{% block content %}
+<div class="content-header">
+  <div class="row mb-2">
+    <div class="col-sm-9">
+      <h1 class="m-0 text-light">{{ title }} <small>Administration&nbsp;&nbsp;&nbsp;<span class="h6 text-warning font-italic font-size-1"><i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;When uploading using Excel File, SOA is set to default (Duty). Please edit manually as necessary to increase the accuracy of the data.&nbsp;&nbsp;<i class="fas fa-exclamation-triangle"></i></span></small></h1>
+    </div>
+    <div class="col-sm-3">
+      <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item text-light active">{{ title }}</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="content">
+  {% for message in messages %}
+    {% if message.tags == 'error' %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="danger">
+    {% else %}
+      <input type="hidden" name="message[]" value="{{ message }}" data-tags="{{ message.tags }}">
+    {% endif %}
+  {% endfor %}
+  <div class="card card-{{ options.theme_color }} card-outline card-outline-tabs mb-0">
+    <div class="card-header p-0 border-bottom-0">
+      <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link font-weight-bold active" id="organic-tab" data-toggle="pill" href="#organic" role="tab" aria-controls="organic" aria-selected="true">Organic Personnel</a>
+        </li>
+        {% if subunits %}
+        <li class="nav-item">
+          <a class="nav-link font-weight-bold" id="subunits-tab" data-toggle="pill" href="#subunits" role="tab" aria-controls="subunits" aria-selected="false">Personnel from Sub-units</a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+          <a class="nav-link font-weight-bold" id="ds-tab" data-toggle="pill" href="#ds" role="tab" aria-controls="ds" aria-selected="true">DS From Other Units</a>
+        </li>
+        {% if unit.is_school %}
+        <li class="nav-item">
+          <a class="nav-link font-weight-bold" id="students-tab" data-toggle="pill" href="#students" role="tab" aria-controls="students" aria-selected="false">Students</a>
+        </li>
+        {% endif %}
+        {% if unit.is_medical %}
+        <li class="nav-item">
+          <a class="nav-link font-weight-bold" id="patients-tab" data-toggle="pill" href="#patients" role="tab" aria-controls="patients" aria-selected="false">Patients</a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+    <div class="card-body">
+      <div class="tab-content" id="custom-tabs-three-tabContent">
+        <div class="tab-pane fade show active" id="organic" role="tabpanel" aria-labelledby="organic-tab">
+          <input type="hidden" name="is_approved" value="0">
+          <div class="mb-3">
+            <form action="{% url 'personnel-upload' %}" id="frm-upload" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <a href="{% url 'download-template' %}" type="button" class="btn btn-md btn-default"><i class="far fa-file-excel"></i> Download Template</a>
+                </div>
+                <div class="custom-file">
+                  <input type="file" class="custom-file-input" id="upfile" name="upfile" accept="" required>
+                  <label class="custom-file-label" for="upfile">Choose file</label>
+                </div>
+                <div class="input-group-append">
+                  <button type="submit" class="btn btn-md btn-outline-primary" form="frm-upload"><i class="fas fa-upload"></i> Upload Excel File</button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <table id="tbl_data" class="table table-bordered table-hover table-sm font-size-1">
+          </table>
+        </div>        
+        {% if subunits %}
+        <div class="tab-pane fade" id="subunits" role="tabpanel" aria-labelledby="subunits-tab">
+          <table id="tbl_subunits" class="table table-bordered table-hover table-sm font-size-1">
+          </table>
+        </div>
+        {% endif %}
+        <div class="tab-pane fade" id="ds" role="tabpanel" aria-labelledby="ds-tab">
+          <table id="tbl_ds" class="table table-bordered table-hover table-sm font-size-1">
+          </table>
+        </div>
+        {% if unit.is_school %}
+        <div class="tab-pane fade" id="students" role="tabpanel" aria-labelledby="students-tab">
+          <table id="tbl_students" class="table table-bordered table-hover table-sm font-size-1">
+          </table>
+        </div>
+        {% endif %}
+        {% if unit.is_medical %}
+        <div class="tab-pane fade" id="patients" role="tabpanel" aria-labelledby="patients-tab">
+          <table id="tbl_patients" class="table table-bordered table-hover table-sm font-size-1">
+          </table>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content"></div>
+  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal-sm">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content"></div>
+  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal-legend">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-{{ options.theme_color }}">
+        <h4 class="modal-title">Legend</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body p-0">
+        <table id="tbl_legend" class="table table-bordered table-hover table-sm font-size-1 mb-0">
+          <tbody>
+            {% for k, v in legends.items %}
+              <tr>
+                <td style="width: 20%;" class="align-middle font-weight-bold">{{ k }}</td>
+                <td style="width: 80%;" class="align-middle">{{ v }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript">
+  $(function () {
+    'use strict'    
+
+    $(document).on('submit', '#frm-data', function (e) {
+      e.preventDefault();
+      var form = this;
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You are about to submit a personnel details. Do you want to proceed?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, submit it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.value) {
+          form.submit();
+        }
+      });
+    });
+  });
+
+  $(document).ready(function(){
+    $('#cat').trigger('change');
+  });
+</script>
+{% endblock extra_js %}
